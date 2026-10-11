@@ -2,8 +2,6 @@ package platform
 
 import "../buffer"
 import "../render"
-import "core:log"
-import "core:os"
 import rl "vendor:raylib"
 
 WIDTH :: 1000
@@ -21,9 +19,21 @@ init :: proc(filename: string) {
 	rl.SetTextureFilter(font.texture, .BILINEAR)
 
 	for !rl.WindowShouldClose() {
+		if rl.IsKeyPressed(.RIGHT) {
+			buffer.move_right(&buf)
+		} else if rl.IsKeyPressed(.LEFT) {
+			buffer.move_left(&buf)
+		} else if rl.IsKeyPressed(.UP) {
+			buffer.move_up(&buf)
+		} else if rl.IsKeyPressed(.DOWN) {
+			buffer.move_down(&buf)
+		}
+
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.BLACK)
+
 		render.render_buffer(buf, font)
+
 		rl.EndDrawing()
 	}
 }

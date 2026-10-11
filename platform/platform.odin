@@ -17,10 +17,13 @@ init :: proc(filename: string) {
 	buf := buffer.open(filename)
 	defer buffer.close(&buf)
 
+	font := rl.LoadFontEx("./assets/fonts/jetbrains.ttf", 16, nil, 0)
+	rl.SetTextureFilter(font.texture, .BILINEAR)
+
 	for !rl.WindowShouldClose() {
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.BLACK)
-		render.render_buffer(buf)
+		render.render_buffer(buf, font)
 		rl.EndDrawing()
 	}
 }

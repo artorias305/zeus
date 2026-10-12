@@ -18,7 +18,7 @@ init :: proc(filename: string) {
 	defer buffer.close(&buf)
 
 	font := rl.LoadFontEx("./assets/fonts/jetbrains.ttf", i32(render.FONT_SIZE), nil, 0)
-	rl.SetTextureFilter(font.texture, .BILINEAR)
+	rl.SetTextureFilter(font.texture, .POINT)
 
 	for !rl.WindowShouldClose() {
 		if rl.IsKeyPressed(.RIGHT) {
@@ -29,10 +29,6 @@ init :: proc(filename: string) {
 			buffer.move_up(&buf)
 		} else if rl.IsKeyPressed(.DOWN) {
 			buffer.move_down(&buf)
-		}
-
-		if rl.IsMouseButtonPressed(.LEFT) {
-			render.move_to_mouse_position(&buf, font)
 		}
 
 		rl.BeginDrawing()

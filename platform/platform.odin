@@ -12,6 +12,8 @@ init :: proc(filename: string) {
 	rl.InitWindow(WIDTH, HEIGHT, TITLE)
 	defer rl.CloseWindow()
 
+	rl.SetExitKey(.KEY_NULL)
+
 	buf := buffer.open(filename)
 	defer buffer.close(&buf)
 

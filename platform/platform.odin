@@ -15,6 +15,7 @@ init :: proc(filename: string) {
 	defer rl.CloseWindow()
 
 	rl.SetExitKey(.KEY_NULL)
+	rl.SetTargetFPS(120)
 
 	buf := buffer.open(filename)
 	defer buffer.close(&buf)
@@ -22,6 +23,9 @@ init :: proc(filename: string) {
 	font := rl.LoadFontEx("./assets/fonts/jetbrains.ttf", i32(render.FONT_SIZE), nil, 0)
 
 	rl.SetTextureFilter(font.texture, .POINT)
+
+	line_h := render.line_height(font)
+	scroll_y: f32 = 0
 
 	for !rl.WindowShouldClose() {
 		control_down := rl.IsKeyDown(.LEFT_CONTROL) || rl.IsKeyDown(.RIGHT_CONTROL)
@@ -62,10 +66,22 @@ init :: proc(filename: string) {
 			}
 		}
 
+		top := f32(buf.cursor_row) * line_h
+		bottom := top + line_h
+
+		if top < scroll_y {
+			scroll_y = top
+		} else if bottom > scroll_y + f32(HEIGHT) {
+			scroll_y = bottom - f32(HEIGHT)
+		}
+
+		max_scroll := max(f32(0), f32(buffer.line_count(buf)) * line_h - f32(HEIGHT))
+		scroll_y = clamp(scroll_y, 0, max_scroll)
+
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.BLACK)
 
-		render.render_buffer(buf, font)
+		render.render_buffer(buf, font, scroll_y)
 
 		rl.EndDrawing()
 	}

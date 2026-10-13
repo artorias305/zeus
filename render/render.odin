@@ -7,8 +7,12 @@ import rl "vendor:raylib"
 FONT_SIZE: f32 = 16
 CHAR_SPACING: f32 = 0
 
-render_buffer :: proc(buf: buffer.Buffer, font: rl.Font) {
-	line_height := f32(font.baseSize + font.baseSize / 2)
+line_height :: proc(font: rl.Font) -> f32 {
+	return f32(font.baseSize + font.baseSize / 2)
+}
+
+render_buffer :: proc(buf: buffer.Buffer, font: rl.Font, scroll_y: f32) {
+	height := line_height(font)
 
 	for row: uint = 0; row < buffer.line_count(buf); row += 1 {
 		start := buffer.line_start(buf, row)
@@ -21,7 +25,7 @@ render_buffer :: proc(buf: buffer.Buffer, font: rl.Font) {
 		rl.DrawTextEx(
 			font,
 			line_cstring,
-			{0, f32(row) * line_height},
+			{0, f32(row) * height - scroll_y},
 			FONT_SIZE,
 			CHAR_SPACING,
 			rl.WHITE,
@@ -42,7 +46,7 @@ render_buffer :: proc(buf: buffer.Buffer, font: rl.Font) {
 	prefix_size := rl.MeasureTextEx(font, prefix_cstring, FONT_SIZE, CHAR_SPACING)
 
 	cursor_x := prefix_size.x
-	cursor_y := f32(row) * line_height
+	cursor_y := f32(row) * height - scroll_y
 
 	cell_size := rl.MeasureTextEx(font, "M", FONT_SIZE, CHAR_SPACING)
 

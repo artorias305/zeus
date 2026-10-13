@@ -12,6 +12,7 @@ Buffer :: struct {
 	cursor_row: uint,
 	cursor_col: uint,
 	dirty:      bool,
+	line_count: uint,
 }
 
 open :: proc(filename: string) -> (b: Buffer) {
@@ -45,6 +46,13 @@ open :: proc(filename: string) -> (b: Buffer) {
 	b.cursor_row = 0
 	b.cursor_col = 0
 	b.dirty = false
+
+	line_count: uint = 0
+	string_data := string(b.data)
+	for line in strings.split_iterator(&string_data, "\n") {
+		line_count += 1
+	}
+	b.line_count = line_count
 
 	return b
 }
@@ -297,4 +305,12 @@ save :: proc(b: ^Buffer) -> os.Error {
 
 has_unsaved_changes :: proc(b: Buffer) -> bool {
 	return b.dirty
+}
+
+go_to_last_line :: proc(b: ^Buffer) {
+	b.cursor_row = b.line_count
+}
+
+go_to_first_line :: proc(b: ^Buffer) {
+	b.cursor_row = 0
 }

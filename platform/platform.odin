@@ -48,6 +48,14 @@ init :: proc(filename: string) {
 			buffer.move_down(&buf)
 		}
 
+		when ODIN_OS == .Darwin {
+			if command_down && rl.IsKeyPressed(.DOWN) {
+				buffer.go_to_last_line(&buf)
+			} else if command_down && rl.IsKeyPressed(.UP) {
+				buffer.go_to_first_line(&buf)
+			}
+		}
+
 		if rl.IsKeyPressed(.ENTER) {
 			buffer.insert_newline(&buf)
 		}
